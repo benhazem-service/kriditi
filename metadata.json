@@ -1,0 +1,5 @@
+{
+  "name": "Krediti - تطبيق الكريدي",
+  "description": "تطبيق متطور لتسيير الكريدي والديون، يحفظ بياناتك بأمان على السحاب (Firebase) للوصول إليها من أي مكان.",
+  "requestFramePermissions": ["camera", "microphone"]
+}

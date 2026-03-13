@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.ownerId;
+    }
+
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'totalBalance']) &&
+             data.ownerId == request.auth.uid;
+    }
+
+    function isValidTransaction(data) {
+      return data.keys().hasAll(['id', 'customerId', 'amount', 'type', 'ownerId', 'date']) &&
+             data.ownerId == request.auth.uid;
+    }
+
+    match /customers/{customerId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.ownerId == request.auth.uid);
+      allow create: if isAuthenticated() && isValidCustomer(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidCustomer(request.resource.data);
+      allow delete: if isAuthenticated() && isDocOwner();
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.ownerId == request.auth.uid);
+      allow create: if isAuthenticated() && isValidTransaction(request.resource.data);
+      allow update: if isAuthenticated() && isDocOwner() && isValidTransaction(request.resource.data);
+      allow delete: if isAuthenticated() && isDocOwner();
+    }
+  }
+}

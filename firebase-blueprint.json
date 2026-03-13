@@ -1,0 +1,47 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "A customer who owes or has paid money",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "gender": { "type": "string", "enum": ["male", "female"] },
+        "totalBalance": { "type": "number" },
+        "photoBase64": { "type": "string" },
+        "voiceBase64": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "totalBalance"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A credit or payment record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["credit", "payment"] },
+        "voiceBase64": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "customerId", "amount", "type", "ownerId", "date"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer records"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Transaction records"
+    }
+  }
+}
